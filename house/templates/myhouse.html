@@ -1,0 +1,89 @@
+{% extends 'base_main.html' %}
+
+{% block title %}
+    爱家-我的房源
+{% endblock %}
+
+{% block css %}
+    {{ super() }}
+    <link href="/static/plugins/bootstrap-datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet">
+    <link href="/static/css/ihome/myhouse.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<body>
+    <div class="container">
+        <div class="top-bar">
+            <div class="nav-bar">
+                <h3 class="page-title">我的房源</h3>
+                <a class="nav-btn fl" href="/user/my/"><span><i class="fa fa-angle-left fa-2x"></i></span></a>
+            </div>
+        </div>
+        <div class="users-con">
+            <ul class="users-list auth-warn">
+                <li>
+                    <div class="user-title">
+                        <h3>尚未进行实名认证，无法发布房屋信息！</h3>
+                    </div>
+                    <div class="user-content">
+                        <a href="/user/auth/" class="btn btn-success">去实名认证</a>
+                    </div>
+                </li>
+            </ul>
+            <ul id="users-list" class="users-list">
+                <li>
+                    <div class="new-user">
+                        <a href="">发布新房源</a>
+                    </div>
+                </li>
+                <!--<li>-->
+                    <!--<a href="/detail.html">-->
+                        <!--<div class="user-title">-->
+                            <!--<h3>房屋ID:1 —— 房屋标题1</h3>-->
+                        <!--</div>-->
+                        <!--<div class="user-content">-->
+                            <!--<img src="/static/images/home01.jpg">-->
+                            <!--<div class="user-text">-->
+                                <!--<ul>-->
+                                    <!--<li>位于：西城区</li>-->
+                                    <!--<li>价格：￥200/晚</li>-->
+                                    <!--<li>发布时间：2016-11-11 20:00:00</li>-->
+                                <!--</ul>-->
+                            <!--</div> -->
+                        <!--</div>-->
+                    <!--</a>-->
+                <!--</li>-->
+
+            </ul>
+        </div>
+        <div class="footer">
+            <p><span><i class="fa fa-copyright"></i></span>爱家租房&nbsp;&nbsp;享受家的温馨</p>
+        </div> 
+    </div>
+{% endblock %}
+
+{% block js %}
+    {{ super() }}
+    <script src="/static/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <script src="/static/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.zh-CN.min.js"></script>
+    <script src="/static/js/template.js"></script>
+    <script>
+        $.post('/house/myhouse_auth/', function(data){
+            if(data.data.failed){
+                $('.auth-warn').css('display', 'block')
+                $('#users-list').css('display', 'none')
+                return
+            }
+            houses = data.data.houses
+            for(h in houses){
+                var l = '<li><a href="/house/detail/'+houses[h].id+'/">'
+                l += '<div class="user-title"><h3>房屋ID：'+houses[h].id+'-----'+houses[h].title+'</h3></div>'
+                l += '<div class="user-content"><img src="/static/media/'+houses[h].image+'">'
+                l += '<div class="user-text"><ul><li>位于：'+houses[h].address+'</li>'
+                l += '<li>价格：'+houses[h].price+'</li><li>发布时间：'+houses[h].create_time+'</li></ul></div></div></a>'
+                l += '<a href="/house/upload_pic/'+houses[h].id+'/">添加房屋详情图片</a></li>'
+                $('#users-list').append(l)
+            }
+        }, 'json')
+    </script>
+{% endblock %}
